@@ -6,7 +6,7 @@ const TopBar = () => {
 
   const user = JSON.parse(localStorage.getItem("user"));
   const handleLogout = () => {
-    localStorage.removeItem("admin");
+    localStorage.removeItem("user");
     navigate("/login");
   };
 
