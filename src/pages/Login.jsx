@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -19,14 +20,45 @@ export default function Login() {
     setEmail(item);
   };
 
-  const handlelogin = (e) => {
+  const handlelogin = async (e) => {
     e.preventDefault();
-    console.log("your Email is.....", email);
-    console.log("Your Password is....", password);
-    localStorage.setItem("admin", "true");
-    setEmail("");
-    setPassword("");
-    navigate("/admin");
+    try {
+      if (emailerror || !email || !password) {
+        toast.error("Please enter a valid email and password");
+        return;
+      }
+      const result = await fetch("http://localhost:3000/api/admin/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+      const data = await result.json();
+      console.log(data);
+      if (result.ok) {
+        toast.success("Login successful");
+        localStorage.setItem("user", JSON.stringify(data.admin));
+
+        // If backend sends JWT
+        // if (data.token) {
+        //   localStorage.setItem("token", data.token);
+        // }
+        setEmail("");
+        setPassword("");
+        setTimeout(() => {
+          navigate("/admin");
+        }, 1000);
+      } else {
+        toast.error(data.message || "Login failed");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Error while login");
+    }
   };
 
   return (

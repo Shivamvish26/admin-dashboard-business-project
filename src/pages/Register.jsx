@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function Register() {
   const [name, setName] = useState("");
@@ -19,15 +20,42 @@ export default function Register() {
     }
     setEmail(item);
   };
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
-    console.log("your Name is.....", name);
-    console.log("your Email is.....", email);
-    console.log("Your Password is....", password);
-    setName("");
-    setEmail("");
-    setPassword("");
-    navigate("/login");
+
+    try {
+      if (emailerror || !email) {
+        toast.error("Please fix all the errors before submitting");
+        return;
+      }
+      const result = await fetch("http://localhost:3000/api/admin/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+        }),
+      });
+      const data = await result.json();
+      console.log(data);
+      if (result.ok) {
+        toast.success("Admin registered successfully!");
+        setName("");
+        setEmail("");
+        setPassword("");
+        setTimeout(() => {
+          navigate("/login");
+        }, 1000);
+      } else {
+        toast.error(data.message || "Registration failed");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Error while registering admin");
+    }
   };
 
   return (

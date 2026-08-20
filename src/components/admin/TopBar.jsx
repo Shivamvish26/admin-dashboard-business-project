@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 const TopBar = () => {
   const navigate = useNavigate();
 
+  const user = JSON.parse(localStorage.getItem("user"));
   const handleLogout = () => {
     localStorage.removeItem("admin");
     navigate("/login");
@@ -16,10 +17,16 @@ const TopBar = () => {
       </div>
 
       <div className="d-flex align-items-center gap-3">
-        <span className="fw-medium">Admin</span>
+        <span>
+          Welcome, <strong>{user?.name || "Admin"}</strong>
+        </span>
 
-        <button type="button" className="common__btn" onClick={handleLogout}>
-          Logout
+        <button
+          type="button"
+          className="btn p-0 border-0 shadow-none"
+          onClick={handleLogout}
+        >
+          <i className="bi bi-box-arrow-right fs-5"></i>
         </button>
       </div>
     </header>
