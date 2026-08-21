@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 export default function Services() {
@@ -41,6 +41,27 @@ export default function Services() {
     },
   ];
 
+  const [data, SetData] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const result = await fetch(
+          "http://localhost:3000/api/service/get-services",
+          {},
+        );
+        const data = await result.json();
+        setTimeout(() => {
+          SetData(data.services);
+        }, 2000);
+        console.log(data);
+      } catch (error) {
+        console.log("Error While Fetch the data", error);
+      }
+    };
+    fetchData();
+  }, []);
+
   return (
     <div className="container">
       <div className="shadow-sm p-3 rounded-3 bg-white">
@@ -74,9 +95,9 @@ export default function Services() {
             </thead>
 
             <tbody>
-              {services.length > 0 ? (
-                services.map((service, index) => (
-                  <tr key={service.id}>
+              {data.length > 0 ? (
+                data.map((service, index) => (
+                  <tr key={service._id}>
                     <td>{index + 1}</td>
 
                     <td>
@@ -129,7 +150,7 @@ export default function Services() {
                     <td>
                       <div className="d-flex gap-2">
                         <Link
-                          to={`/admin/services/view-services/${service.id}`}
+                          to={`/admin/services/view-services/${service._id}`}
                           className="btn btn-sm btn-outline-primary"
                           title="View"
                         >
@@ -137,7 +158,7 @@ export default function Services() {
                         </Link>
 
                         <Link
-                          to={`/admin/services/edit-services/${service.id}`}
+                          to={`/admin/services/edit-services/${service._id}`}
                           className="btn btn-sm btn-outline-warning"
                           title="Edit"
                         >
@@ -161,7 +182,7 @@ export default function Services() {
               ) : (
                 <tr>
                   <td colSpan="9" className="text-center py-4">
-                    No Services Found
+                   Loading Services
                   </td>
                 </tr>
               )}

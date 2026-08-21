@@ -1,26 +1,77 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 
 export default function ViewServices() {
-  // Temporary dummy data
-  const service = {
-    id: "01",
-    title: "Furniture Polish",
-    slug: "furniture-polish",
-    shortDescription: "Professional furniture polishing service",
-    description:
-      "We provide professional furniture polishing services using premium materials and professional techniques to give your furniture a beautiful and long-lasting finish.",
-    image: "",
-    startingPrice: 1500,
-    duration: "2-3 Days",
-    warranty: "1 Year",
-    features: [
-      "Premium Polish Material",
-      "Professional Finishing",
-      "Home Service Available",
-    ],
-    status: "active",
-  };
+  const { id } = useParams();
+
+  const [service, setService] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchService = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`http://localhost:3000/api/service/${id}`);
+        const data = await response.json();
+        console.log("Single Service:", data);
+        if (!response.ok) {
+          throw new Error(data.message || "Failed to fetch service");
+        }
+        setService(data.service);
+      } catch (error) {
+        console.log("Error while fetching service:", error);
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchService();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="container">
+        <div className="bg-white shadow-sm rounded-3 p-4 mt-3 text-center">
+          <p className="mb-0">Loading service...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container">
+        <div className="bg-white shadow-sm rounded-3 p-4 mt-3 text-center">
+          <p className="text-danger">{error}</p>
+
+          <Link
+            to="/admin/services"
+            className="common__btn text-decoration-none w-25"
+          >
+            Back to Services
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (!service) {
+    return (
+      <div className="container">
+        <div className="bg-white shadow-sm rounded-3 p-4 mt-3 text-center">
+          <p className="text-muted">Service Not Found</p>
+
+          <Link
+            to="/admin/services"
+            className="common__btn text-decoration-none"
+          >
+            Back to Services
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container">
@@ -94,13 +145,13 @@ export default function ViewServices() {
               <div className="col-md-4 mb-3">
                 <small className="text-muted">Duration</small>
 
-                <h5>{service.duration}</h5>
+                <h5>{service.duration || "-"}</h5>
               </div>
 
               <div className="col-md-4 mb-3">
                 <small className="text-muted">Warranty</small>
 
-                <h5>{service.warranty}</h5>
+                <h5>{service.warranty || "-"}</h5>
               </div>
             </div>
           </div>
@@ -117,15 +168,18 @@ export default function ViewServices() {
         <div className="mb-4">
           <h5>Features</h5>
 
-          <ul className="list-group">
-            {service.features.map((feature, index) => (
-              <li key={index} className="list-group-item">
-                <i className="bi bi-check-circle-fill text-success me-2"></i>
-
-                {feature}
-              </li>
-            ))}
-          </ul>
+          {service.features?.length > 0 ? (
+            <ul className="list-group">
+              {service.features.map((feature, index) => (
+                <li key={index} className="list-group-item">
+                  <i className="bi bi-check-circle-fill text-success me-2"></i>
+                  {feature}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-muted">No features available</p>
+          )}
         </div>
 
         <div className="mb-4">
