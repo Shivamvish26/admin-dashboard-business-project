@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -7,27 +7,79 @@ export default function AddGallery() {
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
   const [service, setService] = useState("");
+  const [services, setServices] = useState([]);
+
   const [beforeImage, setBeforeImage] = useState(null);
   const [afterImage, setAfterImage] = useState(null);
+
   const [status, setStatus] = useState("active");
+
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const galleryData = {
-      title,
-      category,
-      description,
-      service,
-      beforeImage,
-      afterImage,
-      status,
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:3000/api/service/get-services",
+        );
+        const data = await response.json();
+        console.log("Services:", data);
+        if (!response.ok) {
+          throw new Error(data.message || "Failed to fetch services");
+        }
+        setServices(data.services || []);
+      } catch (error) {
+        console.log("Error while fetching services:", error);
+
+        toast.error("Failed to fetch services");
+      }
     };
-    toast.success("Gallary Details Added");
-    setTimeout(() => {
-      console.log(galleryData);
-      navigate("/admin/gallery");
-    }, 1000);
+    fetchServices();
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const galleryData = new FormData();
+      galleryData.append("title", title);
+      galleryData.append("category", category);
+      galleryData.append("description", description);
+      galleryData.append("service", service);
+      galleryData.append("status", status);
+      if (beforeImage) {
+        galleryData.append("beforeImage", beforeImage);
+      }
+      if (afterImage) {
+        galleryData.append("afterImage", afterImage);
+      }
+      console.log("Sending Gallery Data...");
+      const response = await fetch(
+        "http://localhost:3000/api/gallery/create-gallery",
+        {
+          method: "POST",
+          body: galleryData,
+        },
+      );
+      const data = await response.json();
+      console.log("Gallery Response:", data);
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to create gallery");
+      }
+      toast.success("Gallery Created Successfully");
+      setTitle("");
+      setCategory("");
+      setDescription("");
+      setService("");
+      setBeforeImage(null);
+      setAfterImage(null);
+      setStatus("active");
+      setTimeout(() => {
+        navigate("/admin/gallery");
+      }, 1000);
+    } catch (error) {
+      console.log("Error while creating gallery:", error);
+      toast.error(error.message || "Failed to create gallery");
+    }
   };
 
   return (
@@ -43,7 +95,6 @@ export default function AddGallery() {
           </Link>
         </div>
       </div>
-
       <div className="bg-white shadow-sm rounded-3 p-4 mt-3">
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
@@ -57,12 +108,13 @@ export default function AddGallery() {
               required
             />
           </div>
+
           <div className="mb-3">
             <label className="form-label">Category</label>
             <input
               type="text"
               className="form-control"
-              placeholder="Enter Category"
+              placeholder="Enter category"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
               required
@@ -74,26 +126,28 @@ export default function AddGallery() {
             <textarea
               className="form-control"
               rows="5"
-              placeholder="Enter service description"
+              placeholder="Enter gallery description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              required
             />
           </div>
-          <label className="form-label">Service</label>
 
-          <select
-            className="form-select"
-            value={service}
-            onChange={(e) => setService(e.target.value)}
-            required
-          >
-            <option value="">Select Service</option>
-
-            <option value="service_id">Furniture Polish</option>
-
-            <option value="service_ids">Furniture Painting</option>
-          </select>
+          <div className="mb-3">
+            <label className="form-label">Service</label>
+            <select
+              className="form-select"
+              value={service}
+              onChange={(e) => setService(e.target.value)}
+              required
+            >
+              <option value="">Select Service</option>
+              {services.map((item) => (
+                <option key={item._id} value={item._id}>
+                  {item.title}
+                </option>
+              ))}
+            </select>
+          </div>
 
           <div className="mb-3">
             <label className="form-label">Before Image</label>
@@ -102,8 +156,10 @@ export default function AddGallery() {
               className="form-control"
               accept="image/jpeg,image/jpg,image/png,image/webp"
               onChange={(e) => setBeforeImage(e.target.files[0])}
+              required
             />
           </div>
+
           <div className="mb-3">
             <label className="form-label">After Image</label>
             <input
@@ -111,6 +167,7 @@ export default function AddGallery() {
               className="form-control"
               accept="image/jpeg,image/jpg,image/png,image/webp"
               onChange={(e) => setAfterImage(e.target.files[0])}
+              required
             />
           </div>
 
@@ -122,6 +179,7 @@ export default function AddGallery() {
               onChange={(e) => setStatus(e.target.value)}
             >
               <option value="active">Active</option>
+
               <option value="inactive">Inactive</option>
             </select>
           </div>

@@ -1,8 +1,9 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
 export default function EditServices() {
+  const { id } = useParams();
   const [title, setTitle] = useState("");
   const [shortDescription, setShortDescription] = useState("");
   const [description, setDescription] = useState("");
@@ -11,6 +12,9 @@ export default function EditServices() {
   const [warranty, setWarranty] = useState("");
   const [features, setFeatures] = useState([""]);
   const [status, setStatus] = useState("active");
+  const [service, setService] = useState(null);
+  const [loading, setloading] = useState(true);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleFeatureChange = (index, value) => {
@@ -28,27 +32,84 @@ export default function EditServices() {
     setFeatures(updatedFeatures);
   };
 
-  const handleSubmit = (e) => {
+  const updateservice = async (e) => {
     e.preventDefault();
-    const serviceData = {
-      title,
-      shortDescription,
-      description,
-      startingPrice,
-      duration,
-      warranty,
-      features,
-      status,
-    };
-    toast.success("Services Details Added");
-    setTimeout(() => {
-      console.log(serviceData);
-      navigate("/admin/services");
-    }, 1000);
+    try {
+      const serviceData = {
+        title,
+        shortDescription,
+        description,
+        startingPrice,
+        duration,
+        warranty,
+        features,
+        status,
+      };
+      const res = await fetch(`http://localhost:3000/api/service/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(serviceData),
+      });
+      const data = await res.json();
+      console.log("Updated service:", data);
+
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to update service");
+      }
+      toast.success("Service updated successfully!");
+      setTimeout(() => {
+        navigate("/admin/services");
+      }, 1000);
+    } catch (error) {
+      console.log("Error while updating service:", error);
+      toast.error(error.message || "Failed to update service");
+    }
   };
 
+  // data fetched
+  useEffect(() => {
+    const fetchService = async () => {
+      try {
+        setloading(true);
+
+        const res = await fetch(`http://localhost:3000/api/service/${id}`);
+
+        const data = await res.json();
+
+        console.log("Services data...", data);
+
+        if (!res.ok) {
+          throw new Error(data.message || "Failed to fetch service");
+        }
+
+        const serviceData = data.service;
+
+        setService(serviceData);
+
+        setTitle(serviceData.title || "");
+        setShortDescription(serviceData.shortDescription || "");
+        setDescription(serviceData.description || "");
+        setStartingPrice(serviceData.startingPrice || "");
+        setDuration(serviceData.duration || "");
+        setWarranty(serviceData.warranty || "");
+        setFeatures(serviceData.features?.length ? serviceData.features : [""]);
+
+        setStatus(serviceData.status || "active");
+      } catch (error) {
+        console.log("Error while fetching the data", error);
+        setError(error.message);
+      } finally {
+        setloading(false);
+      }
+    };
+
+    fetchService();
+  }, [id]);
+
   return (
-    <div className="container">
+    <div className="">
       <div className="shadow-sm p-3 rounded-3 bg-white">
         <div className="d-flex align-items-center justify-content-between">
           <h4 className="mb-0">Edit Service</h4>
@@ -62,7 +123,7 @@ export default function EditServices() {
       </div>
 
       <div className="bg-white shadow-sm rounded-3 p-4 mt-3">
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={updateservice}>
           <div className="mb-3">
             <label className="form-label">Service Title</label>
             <input

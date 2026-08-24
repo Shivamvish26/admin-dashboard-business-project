@@ -31,7 +31,7 @@ export default function ViewServices() {
 
   if (loading) {
     return (
-      <div className="container">
+      <div className="">
         <div className="bg-white shadow-sm rounded-3 p-4 mt-3 text-center">
           <p className="mb-0">Loading service...</p>
         </div>
@@ -41,7 +41,7 @@ export default function ViewServices() {
 
   if (error) {
     return (
-      <div className="container">
+      <div className="">
         <div className="bg-white shadow-sm rounded-3 p-4 mt-3 text-center">
           <p className="text-danger">{error}</p>
 
@@ -58,7 +58,7 @@ export default function ViewServices() {
 
   if (!service) {
     return (
-      <div className="container">
+      <div className="">
         <div className="bg-white shadow-sm rounded-3 p-4 mt-3 text-center">
           <p className="text-muted">Service Not Found</p>
 
@@ -74,7 +74,7 @@ export default function ViewServices() {
   }
 
   return (
-    <div className="container">
+    <div className="">
       <div className="shadow-sm p-3 rounded-3 bg-white">
         <div className="d-flex align-items-center justify-content-between">
           <h4 className="mb-0">Service Details</h4>

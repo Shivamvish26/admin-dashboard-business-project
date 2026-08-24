@@ -83,7 +83,7 @@ export default function AddServices() {
   };
 
   return (
-    <div className="container">
+    <div className="">
       <div className="shadow-sm p-3 rounded-3 bg-white">
         <div className="d-flex align-items-center justify-content-between">
           <h4 className="mb-0">Add Service</h4>

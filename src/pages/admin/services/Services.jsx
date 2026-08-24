@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function Services() {
   const services = [
@@ -41,7 +42,30 @@ export default function Services() {
     },
   ];
 
-  const [data, SetData] = useState([]);
+  const { id } = useParams;
+  const [data, setData] = useState([]);
+
+  const handledelete = async (id) => {
+    const confirmdelete = window.confirm(
+      "Are you sure you want to delete this service?",
+    );
+    if (!confirmdelete) return;
+    try {
+      const result = await fetch(`http://localhost:3000/api/service/${id}`, {
+        method: "DELETE",
+      });
+      const res = await result.json();
+      console.log("Delete Response:", res);
+      if (!result.ok) {
+        throw new Error(res.message || "Failed to delete service");
+      }
+      toast.success("Service successfully deleted");
+      setData((prevData) => prevData.filter((item) => item._id !== id));
+    } catch (error) {
+      console.log("Error while deleting the service:", error);
+      toast.error(error.message || "Error while deleting the service");
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -52,7 +76,7 @@ export default function Services() {
         );
         const data = await result.json();
         setTimeout(() => {
-          SetData(data.services);
+          setData(data.services);
         }, 2000);
         console.log(data);
       } catch (error) {
@@ -63,7 +87,7 @@ export default function Services() {
   }, []);
 
   return (
-    <div className="container">
+    <div className="">
       <div className="shadow-sm p-3 rounded-3 bg-white">
         <div className="d-flex align-items-center justify-content-between">
           <h4 className="mb-0">Services</h4>
@@ -169,9 +193,7 @@ export default function Services() {
                           type="button"
                           className="btn btn-sm btn-outline-danger"
                           title="Delete"
-                          onClick={() =>
-                            console.log("Delete Service:", service.id)
-                          }
+                          onClick={() => handledelete(service._id)}
                         >
                           <i className="bi bi-trash"></i>
                         </button>
@@ -182,7 +204,7 @@ export default function Services() {
               ) : (
                 <tr>
                   <td colSpan="9" className="text-center py-4">
-                   Loading Services
+                    Loading Services
                   </td>
                 </tr>
               )}
