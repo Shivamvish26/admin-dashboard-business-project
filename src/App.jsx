@@ -3,7 +3,7 @@ import Dashboard from "./pages/admin/Dashboard";
 import { Router, Routes, Route, Navigate } from "react-router-dom";
 import Services from "./pages/admin/services/Services";
 import Gallery from "./pages/admin/gallery/Gallery";
-import Booking from "./pages/admin/Booking";
+import Booking from "./pages/admin/booking/Booking";
 import Contact from "./pages/admin/Contact";
 import Testimonials from "./pages/admin/Testimonials";
 import FAQs from "./pages/admin/FAQs";
@@ -16,6 +16,9 @@ import ViewServices from "./pages/admin/services/View-services";
 import AddGallery from "./pages/admin/gallery/Add-gallery";
 import EditGallery from "./pages/admin/gallery/Edit-gallery";
 import ViewGallery from "./pages/admin/gallery/View-gallery";
+import AddBooking from "./pages/admin/booking/Add-booking";
+import ViewBooking from "./pages/admin/booking/View-booking";
+import EditBooking from "./pages/admin/booking/Edit-booking";
 
 function App() {
   return (
@@ -44,16 +47,6 @@ function App() {
         }
       />
 
-      <Route
-        path="/admin/booking"
-        element={
-          <ProtectedRoute>
-            <AdminLayout>
-              <Booking />
-            </AdminLayout>
-          </ProtectedRoute>
-        }
-      />
       <Route
         path="/admin/contact"
         element={
@@ -153,6 +146,48 @@ function App() {
           <ProtectedRoute>
             <AdminLayout>
               <ViewGallery />
+            </AdminLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Booking Routes */}
+      <Route
+        path="/admin/booking"
+        element={
+          <ProtectedRoute>
+            <AdminLayout>
+              <Booking />
+            </AdminLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/booking/add-booking"
+        element={
+          <ProtectedRoute>
+            <AdminLayout>
+              <AddBooking />
+            </AdminLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/booking/view-booking/:id"
+        element={
+          <ProtectedRoute>
+            <AdminLayout>
+              <ViewBooking />
+            </AdminLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/booking/edit-booking/:id"
+        element={
+          <ProtectedRoute>
+            <AdminLayout>
+              <EditBooking />
             </AdminLayout>
           </ProtectedRoute>
         }

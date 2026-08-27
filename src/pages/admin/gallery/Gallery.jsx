@@ -1,5 +1,6 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function Gallery() {
   const gallery = [
@@ -7,14 +8,60 @@ export default function Gallery() {
       id: "01",
       title: "Wooden Door Polish",
       category: "Door",
-      description:
-        "Old wooden door polished",
-       service :"6a7dadaa7c9753e99afbf8d5",
+      description: "Old wooden door polished",
+      service: "6a7dadaa7c9753e99afbf8d5",
       beforeImage: "",
       afterImage: "",
       status: "active",
     },
   ];
+
+  const [gallerydata, setGalleryData] = useState("");
+
+  const handledelete = async (id) => {
+    const confirmdelete = window.confirm(
+      "Are you sure you want to delete this service?",
+    );
+    if (!confirmdelete) return;
+    try {
+      const result = await fetch(`http://localhost:3000/api/gallery/${id}`, {
+        method: "DELETE",
+      });
+      const res = await result.json();
+      console.log("Delete Response:", res);
+      if (!result.ok) {
+        throw new Error(res.message || "Failed to delete service");
+      }
+      toast.success("Service successfully deleted");
+      setGalleryData((prevData) => prevData.filter((item) => item._id !== id));
+    } catch (error) {
+      console.log("Error while deleting the service:", error);
+      toast.error(error.message || "Error while deleting the service");
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const result = await fetch(
+          "http://localhost:3000/api/gallery/get-gallery",
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          },
+        );
+        const gallerydata = await result.json();
+        setTimeout(() => {
+          setGalleryData(gallerydata.gallery);
+        }, 200);
+        console.log(gallerydata);
+      } catch (error) {
+        console.log("Error While fetch the data", error);
+      }
+    };
+    fetchData();
+  }, []);
 
   return (
     <div className="container">
@@ -47,8 +94,8 @@ export default function Gallery() {
             </thead>
 
             <tbody>
-              {gallery.length > 0 ? (
-                gallery.map((gallery, index) => (
+              {gallerydata.length > 0 ? (
+                gallerydata.map((gallery, index) => (
                   <tr key={gallery.id}>
                     <td>{index + 1}</td>
 
@@ -67,7 +114,7 @@ export default function Gallery() {
                     <td>
                       {gallery.beforeImage ? (
                         <img
-                          src={gallery.beforeImage}
+                          src={`http://localhost:3000${gallery.beforeImage}`}
                           alt={gallery.title}
                           width="60"
                           height="60"
@@ -83,7 +130,7 @@ export default function Gallery() {
                     <td>
                       {gallery.afterImage ? (
                         <img
-                          src={gallery.afterImage}
+                          src={`http://localhost:3000${gallery.afterImage}`}
                           alt={gallery.title}
                           width="60"
                           height="60"
@@ -112,7 +159,7 @@ export default function Gallery() {
                     <td>
                       <div className="d-flex gap-2">
                         <Link
-                          to={`/admin/gallerys/view-gallery/${gallery.id}`}
+                          to={`/admin/gallerys/view-gallery/${gallery._id}`}
                           className="btn btn-sm btn-outline-primary"
                           title="View"
                         >
@@ -120,7 +167,7 @@ export default function Gallery() {
                         </Link>
 
                         <Link
-                          to={`/admin/gallerys/edit-gallery/${gallery.id}`}
+                          to={`/admin/gallerys/edit-gallery/${gallery._id}`}
                           className="btn btn-sm btn-outline-warning"
                           title="Edit"
                         >
@@ -131,9 +178,7 @@ export default function Gallery() {
                           type="button"
                           className="btn btn-sm btn-outline-danger"
                           title="Delete"
-                          onClick={() =>
-                            console.log("Delete gallery:", gallery.id)
-                          }
+                          onClick={() => handledelete(gallery._id)}
                         >
                           <i className="bi bi-trash"></i>
                         </button>
@@ -144,7 +189,7 @@ export default function Gallery() {
               ) : (
                 <tr>
                   <td colSpan="9" className="text-center py-4">
-                    No Gallery Found
+                    Gallery Not Found
                   </td>
                 </tr>
               )}

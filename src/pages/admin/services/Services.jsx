@@ -44,6 +44,7 @@ export default function Services() {
 
   const { id } = useParams;
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const handledelete = async (id) => {
     const confirmdelete = window.confirm(
@@ -70,17 +71,21 @@ export default function Services() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
         const result = await fetch(
           "http://localhost:3000/api/service/get-services",
-          {},
         );
-        const data = await result.json();
-        setTimeout(() => {
-          setData(data.services);
-        }, 2000);
-        console.log(data);
+        const responseData = await result.json();
+        console.log(responseData);
+        if (!result.ok) {
+          throw new Error(responseData.message || "Failed to fetch services");
+        }
+        setData(responseData.services || []);
       } catch (error) {
         console.log("Error While Fetch the data", error);
+        setData([]);
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();
@@ -119,7 +124,13 @@ export default function Services() {
             </thead>
 
             <tbody>
-              {data.length > 0 ? (
+              {loading ? (
+                <tr>
+                  <td colSpan="9" className="text-center py-4">
+                    Loading Services...
+                  </td>
+                </tr>
+              ) : data.length > 0 ? (
                 data.map((service, index) => (
                   <tr key={service._id}>
                     <td>{index + 1}</td>
@@ -130,7 +141,7 @@ export default function Services() {
 
                     <td>
                       <span title={service.shortDescription}>
-                        {service.shortDescription.length > 40
+                        {service.shortDescription?.length > 40
                           ? `${service.shortDescription.substring(0, 40)}...`
                           : service.shortDescription}
                       </span>
@@ -139,7 +150,7 @@ export default function Services() {
                     <td>
                       {service.image ? (
                         <img
-                          src={service.image}
+                          src={`http://localhost:3000${service.image}`}
                           alt={service.title}
                           width="60"
                           height="60"
@@ -204,7 +215,7 @@ export default function Services() {
               ) : (
                 <tr>
                   <td colSpan="9" className="text-center py-4">
-                    Loading Services
+                    Services Not Found
                   </td>
                 </tr>
               )}
