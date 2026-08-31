@@ -4,7 +4,6 @@ import { Router, Routes, Route, Navigate } from "react-router-dom";
 import Services from "./pages/admin/services/Services";
 import Gallery from "./pages/admin/gallery/Gallery";
 import Booking from "./pages/admin/booking/Booking";
-import Contact from "./pages/admin/Contact";
 import Testimonials from "./pages/admin/Testimonials";
 import FAQs from "./pages/admin/FAQs";
 import Login from "./pages/Login";
@@ -19,6 +18,7 @@ import ViewGallery from "./pages/admin/gallery/View-gallery";
 import AddBooking from "./pages/admin/booking/Add-booking";
 import ViewBooking from "./pages/admin/booking/View-booking";
 import EditBooking from "./pages/admin/booking/Edit-booking";
+import Contact from "./pages/admin/contact/Contact";
 
 function App() {
   return (
@@ -47,16 +47,6 @@ function App() {
         }
       />
 
-      <Route
-        path="/admin/contact"
-        element={
-          <ProtectedRoute>
-            <AdminLayout>
-              <Contact />
-            </AdminLayout>
-          </ProtectedRoute>
-        }
-      />
       <Route
         path="/admin/testimonials"
         element={
@@ -188,6 +178,18 @@ function App() {
           <ProtectedRoute>
             <AdminLayout>
               <EditBooking />
+            </AdminLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* contact route */}
+      <Route
+        path="/admin/contact"
+        element={
+          <ProtectedRoute>
+            <AdminLayout>
+              <Contact />
             </AdminLayout>
           </ProtectedRoute>
         }
