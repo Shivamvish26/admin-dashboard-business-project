@@ -4,8 +4,6 @@ import { Router, Routes, Route, Navigate } from "react-router-dom";
 import Services from "./pages/admin/services/Services";
 import Gallery from "./pages/admin/gallery/Gallery";
 import Booking from "./pages/admin/booking/Booking";
-import Testimonials from "./pages/admin/Testimonials";
-import FAQs from "./pages/admin/FAQs";
 import Login from "./pages/Login";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import Register from "./pages/Register";
@@ -19,6 +17,9 @@ import AddBooking from "./pages/admin/booking/Add-booking";
 import ViewBooking from "./pages/admin/booking/View-booking";
 import EditBooking from "./pages/admin/booking/Edit-booking";
 import Contact from "./pages/admin/contact/Contact";
+import Testimonials from "./pages/admin/testimonials/Testimonials";
+import FrontendLayout from "./layout/FrontendLayout";
+import Home from "./pages/website/Home";
 
 function App() {
   return (
@@ -26,6 +27,17 @@ function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/Register" element={<Register />} />
 
+      {/* Public routes */}
+      <Route
+        path="/"
+        element={
+          <FrontendLayout>
+            <Home />
+          </FrontendLayout>
+        }
+      />
+      {/* --------------------------------------------------------------------------------------------------------------- */}
+      {/* Admin Routes */}
       <Route
         path="/admin"
         element={
@@ -47,26 +59,6 @@ function App() {
         }
       />
 
-      <Route
-        path="/admin/testimonials"
-        element={
-          <ProtectedRoute>
-            <AdminLayout>
-              <Testimonials />
-            </AdminLayout>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/admin/faqs"
-        element={
-          <ProtectedRoute>
-            <AdminLayout>
-              <FAQs />
-            </AdminLayout>
-          </ProtectedRoute>
-        }
-      />
       {/* Services Route */}
       <Route
         path="/admin/services/add-services"
@@ -195,7 +187,19 @@ function App() {
         }
       />
 
-      <Route path="*" element={<Navigate to="/login" replace />} />
+      {/* testimonials route */}
+      <Route
+        path="/admin/testimonials"
+        element={
+          <ProtectedRoute>
+            <AdminLayout>
+              <Testimonials />
+            </AdminLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }

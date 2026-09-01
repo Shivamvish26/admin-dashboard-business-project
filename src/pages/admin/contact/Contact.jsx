@@ -46,12 +46,12 @@ export default function Contact() {
         <div className="d-flex align-items-center justify-content-between">
           <h4 className="mb-0">Contact</h4>
 
-          <Link
+          {/* <Link
             to="/admin/contact/add-contact"
             className="common__btn text-decoration-none w-25"
           >
             Add Contact
-          </Link>
+          </Link> */}
         </div>
       </div>
 
@@ -67,7 +67,7 @@ export default function Contact() {
                 <th>Subject</th>
                 <th>Message</th>
                 <th>Status</th>
-                <th>Action</th>
+                {/* <th>Action</th> */}
               </tr>
             </thead>
 
@@ -117,7 +117,7 @@ export default function Contact() {
                       </span>
                     </td>
 
-                    <td>
+                    {/* <td>
                       <div className="d-flex gap-2">
                         <Link
                           to={`/admin/contact/view-contact/${contact._id}`}
@@ -127,7 +127,7 @@ export default function Contact() {
                           <i className="bi bi-eye"></i>
                         </Link>
                       </div>
-                    </td>
+                    </td> */}
                   </tr>
                 ))
               ) : (

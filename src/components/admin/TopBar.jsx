@@ -17,9 +17,9 @@ const TopBar = () => {
       </div>
 
       <div className="d-flex align-items-center gap-3">
-        <span>
+        {/* <span>
           Welcome, <strong>{user?.name || "Admin"}</strong>
-        </span>
+        </span> */}
 
         <button
           type="button"

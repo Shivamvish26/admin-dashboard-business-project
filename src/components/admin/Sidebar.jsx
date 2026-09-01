@@ -19,7 +19,7 @@ const Sidebar = () => {
 
         <Link to="/admin/testimonials">Testimonials</Link>
 
-        <Link to="/admin/faqs">FAQs</Link>
+        {/* <Link to="/admin/faqs">FAQs</Link> */}
       </nav>
 
     </aside>
