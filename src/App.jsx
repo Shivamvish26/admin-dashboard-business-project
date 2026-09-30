@@ -20,6 +20,11 @@ import Contact from "./pages/admin/contact/Contact";
 import Testimonials from "./pages/admin/testimonials/Testimonials";
 import FrontendLayout from "./layout/FrontendLayout";
 import Home from "./pages/website/Home";
+import About from "./pages/website/About";
+import Service from "./pages/website/Services";
+import Gallerys from "./pages/website/Gallery";
+import Contactform from "./pages/website/Contact";
+import Bookingforms from "./pages/website/Booking";
 
 function App() {
   return (
@@ -36,7 +41,49 @@ function App() {
           </FrontendLayout>
         }
       />
+      <Route
+        path="/about"
+        element={
+          <FrontendLayout>
+            <About />
+          </FrontendLayout>
+        }
+      />
+      <Route
+        path="/services"
+        element={
+          <FrontendLayout>
+            <Service />
+          </FrontendLayout>
+        }
+      />
+      <Route
+        path="/gallery"
+        element={
+          <FrontendLayout>
+            <Gallerys />
+          </FrontendLayout>
+        }
+      />
+      <Route
+        path="/contact"
+        element={
+          <FrontendLayout>
+            <Contactform />
+          </FrontendLayout>
+        }
+      />
+      <Route
+        path="/booking"
+        element={
+          <FrontendLayout>
+            <Bookingforms />
+          </FrontendLayout>
+        }
+      />
+      
       {/* --------------------------------------------------------------------------------------------------------------- */}
+
       {/* Admin Routes */}
       <Route
         path="/admin"
